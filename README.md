@@ -1,145 +1,157 @@
-# Aula 01
+# AULA 01
 
-## APRESENTAÇÃO E PRINCIPAIS DISTRIBUIÇÕES
+Nesse curso, aprenderemos a **localizar arquivos** e a trabalhar com alguns conteúdos.
 
-É importante aprendermos o Linux porque ele está presente em inúmeros lugares da internet e do mundo da tecnologia em geral.
+## FILTRANDO O CONTEÚDO
 
-Esse curso focará no usuário que quer utilizar o Linux para realizar as tarefas do dia a dia.
+O comando `cat nomeDoArquivo` exibe o conteúdo do arquivo, se esse arquivo for um arquivo de texto.
 
-Existem várias distribuições Linux, porém, a grande maioria das distribuições foram baseadas no Debian, como o Ubuntu, e do Slackware, como o openSUSE.
+O comando `grep http services` exibirá todas as ocorrências da string `http` dentro do arquivo `services` do diretório atual.
 
-O CentOS é uma distribuição inspirada no RHEL e que é mantida pela comunidade, normalmente ela é utilizada em servidores. O Fedora é uma versão inspirada no RHEL, porém, ela é mais utilizada em desktops.
+O comando `grep -i http services` procurará, ignorando o case, a string `http` no arquivo `services`.
 
-O curso será focado na distribuição Ubuntu, que foi derivada do Debian.
+O comando `grep -l ricardo *`, procurará, no diretório atual, todos os arquivos que contém a string `ricardo`, e retornará o **nome** desses arquivos.
 
-## PREPARANDO O SETUP
+O comando `grep -L ricardo *`, ao contrário do exemplo anterior, fará a mesma busca e retornará os arquivos que **não possuírem** a string `ricardo`.
 
-É muito recomendado instalarmos uma distribuição Linux em um virtualizador, pois, dentro dele, conseguimos instalar vários sistemas operacionais, e nenhum desses sistemas operacionais afetará nada relacionado ao sistema original.
+## RECURSIVIDADE NO GREP
 
-O VirtualBox é o virtualizador que será utilizado durante o curso.
+O comando `grep HTTP -r *` procurará, em todos os arquivos e pastas no diretório atual, de forma recursiva, os arquivos que tiverem a string `HTTP`.
 
-As versões **LTS** do Ubuntu são as versões que possuem um suporte de longo prazo.
+## FORMATANDO A SAÍDA DA TELA
 
-## INSTALANDO O LINUX
+O comando `more nome-do-arquivo` realiza a paginação do arquivo, transformando o arquivo em algo paginado. Nesse comando, o `espaço` rola a tela para baixo, e o `enter` pula de linha em linha. A tecla `B` volta uma página. A tecla `q` sai do paginador.
 
-Após criarmos uma máquina virtual e instalarmos o sistema operacional, que, no curso, será o **Ubuntu Server 20.04.03**.
+O comando `less nome-do-arquivo` é uma versão mais atualizada do comando `more`, pois ela permite que a paginação seja realizada com as teclas do cursor, como `seta para baixo`, `seta para cima` e etc.
 
-Nesse curso, instalaremos o Ubuntu em uma máquina virtual e acessaremos essa máquina virtual via **SSH** pela máquina física.
+O comando `tail nome-do-arquivo` exibe as últimas dez linhas de um arquivo. O comando `head nome-do-arquivo` exibe as dez primeiras linhas de um arquivo.
 
-Para isso, devemos acessar as configurações de redes da máquina virtual que foi criada e criar um `Network Adapter` no modo `Bridged Adapter`, dessa forma, será criada uma interface lógica em cima da interface física já existente.
+O comando `tail -n 3 nome-do-arquivo` permite que visualizemos as últimas três linhas de um determinado arquivo.
 
-Nessa interface lógica, a máquina virtual obterá o IP da rede local, via DHCP, permitindo que o SSH seja realizado para essa máquina virtual.
+# AULA 02
 
-Em ambientes de trabalho comuns, sempre acessamos as máquinas externas via SSH.
+## PROCURANDO ARQUIVOS NO SISTEMA
 
-O **Open SSH Server** é o servidor que permitirá que a conexão remota seja realizada, ou seja, que esse servidor seja acessado remotamente por outras máquinas. Durante a instalação do Ubuntu Server, podemos selecionar para que o Open SSH Server já seja instalado.
+O comando `find diretorioInicialDaBusca -name .*conf` buscará todos os arquivos, nesse diretório inicial e de forma recursiva, que terminam com o sufixo `.conf`.
 
-# Aula 02
+O comando `find /etc --maxdepth 2 -name *.conf` procurará, no diretório `/etc` e em mais um diretório, a partir do `/etc`, de profundidade, todos os arquivos que terminarem com o sufixo `.conf`.
 
-## ACESSANDO O LINUX REMOTAMENTE
+## MAIS RECURSOS DO FIND - AMIN, ATIME, INAME
 
-Primeiramente, para realizarmos a conexão SSH, devemos saber o IP da máquina virtual, para isso, devemos utilizar o comando `ip addr`. Após sabermos o endereço da máquina que queremos conectar, basta utilizarmos o comando `ssh nome-do-usuario@ip-da-maquina-virtual`.
+O comando `find . -amin -5` permite que procuremos, no diretório atual e de forma recursiva, todos os arquivos que foram alterados (?) nos últimos cinco minutos.
 
-O `apt` é uma ferramenta para o gerenciamento de pacotes. Sempre que vamos instalar uma aplicação em um servidor, baixamos essa aplicação de um repositório
+O comando `find . -atime -2` realiza a query por **dias**, assim, temos os arquivos que foram alterados (?) nos últimos dois dias.
 
-O comando `sudo apt update` atualiza as referências locais dos pacotes e informa ao sistema se há pacotes mais novos disponíveis ou não.
+O comando `find / -size +100M` listará todos os arquivos que possuirem um tamanho maior que `100mb`.
 
-O comando `sudo` permite a execução de um comando com privilégios administrativos.
+Se não utilizarmos o sinal de `+`, estaremos procurando por arquivos que tenham o **tamanho exato** de `100mb`.
 
-O comando `sudo apt install nome-do-pacote` permite o download de um determinado pacote dos repositórios que estão na lista de repositórios válidos de nossa máquina.
+O comando `find /etc -maxdepth 2 -iname *.conf` procurará, no diretório `/etc`, com dois diretórios de profundidade, ou seja, o diretório `/etc` e mais um, os arquivos que terminam com `.conf` e o parâmetro `-iname` ignorará o case das palavras.
 
-## UTILIZANDO UMA INSTÂNCIA DA NUVEM
-
-Podemos criar uma máquina remotamente na EC2 da AWS, por exemplo, e acessá-la através de SSH. A própria AWS fornece as chaves de autenticação, que devem ser inseridas no terminal, e a string de conexão SSH para nos conectarmos à máquina da AWS.
-
-Alguns provedores de máquinas virtuais, como a AWS, fornecem distribuições Linux customizadas.
+O comando `ls -lh` exibe os arquivos formatados para a **leitura humana**.
 
 # AULA 03
 
-## NAVEGANDO NO SISTEMA - PWD E LS
+## REDIRECIONANDO A SAÍDA PADRÃO PARA UM ARQUIVO
 
-A linha inicial do terminal, que possui algo parecido com `rafael@computador-do-rafael:~/Desktop$`. A notação utilizada nessa linha é `nome-do-usuario@nome-do-host:diretorio-atual privilegio-administrativo-ou-comum(#/$)`
+Quando executamos um comando no Linux, como o comando `grep ssh services`, por exemplo, o output padrão desse comando será exibido na tela do usuário.
 
-O comando `pwd` exibirá o diretório atual em que estamos. O significado da sigla `pwd` é `print working directory`
+Para redirecionarmos a saída padrão de um comando para um arquivo, podemos utilizar o comando `grep ssh services > listagem.txt`, dessa forma, a saída padrão do comando `grep` será enviada para um determinado arquivo.
 
-O comando `ls` serve para listar o conteúdo do diretório. Se utilizarmos o comando `ls -a` listaremos o conteúdo do diretório, incluindo os arquivos ocultos. O comando `ls -la` serve para listar de forma detalhada todos os arquivos.
+Quando utilizamos o comando `grep ssh services > listagem.txt`, o shell, primeiramente, criará o arquivo `listagem.txt`, assim, se utilizarmos o operador `>`, todo o conteúdo do arquivo `listagem.txt` será perdido, e ele apenas terá o output do comando `grep` dentro dele.
 
-O comando `ll` é um **atalho do Ubuntu** para o comando `ls -la`.
+O comando `grep ssh services >> listagem.txt` fará o `append`, ou seja, concatenará o conteúdo já existente do arquivo `listagem.txt` com a saída padrão do comando `grep`.
 
-O comando `clear` serve para limparmos a tela do terminal.
+O operador `|` obtém a saída padrão de um comando e redireciona essa saída para a entrada padrão de outro comando, assim, se utilizarmos o comando `cat /etc/passwd | grep teste`, a saída padrão do comando `cat`, que lista todos os conteúdos de um arquivo de texto, será passada para a entrada padrão do comando `grep`, que procurará, nesse texto, pela string `teste`.
 
-O comando `ls --help` exibe uma ajuda para esse comando.
+Podemos utilizar o comando `cat /etc/passwd | grep teste > listagem.txt`, estamos redirecionando a saída padrão do comando `grep teste` para o arquivo `listagem.txt`.
 
-O comando `man nome-do-comando` exibirá a página do manual para um determinado comando.
+## FILTRANDO AS INFORMAÇÕES COM O CUT
 
-## HIERARQUIA NO FILESYSTEM - FHS
+O comando `cat syslog | grep systemd | wc` exibirá três informações, que são `numero-de-linhas numero-de-palavras informacao-em-bytes`.
 
-O comando `cd` leva o usuário para a sua `/home` específica.
+O comando `cat syslog | grep systemd | wc -l` exibirá a quantidade de linhas desse arquivo.
 
-O comando `cd nome-do-diretorio` leva o usuário para um diretório específico.
+O comando `cut -d`. O `-d` é o **delimitador**, ou seja, ele indica o que está separando uma coluna de outra em um arquivo. Se o arquivo estiver separado por `:` e utilizarmos o comando `cat logs | cut -d ":" -f1`, o conteúdo do arquivo `logs` será dividido em colunas, ou seja, a cada `:`, teremos uma coluna, e o `-f1` indicará que pegaremos apenas a primeira coluna dessa divisão.
 
-A árvore de diretório do Linux é chamada de `FHS`, e ela começa no diretório `/`.
+O comando `cat logs | cut -d " " -f6-` exibirá todas as colunas da divisão, da sexta coluna até o final do arquivo.
 
-## ATALHOS DE NAVEGAÇÃO
-
-O comando `cd -` serve para acessarmos o último diretório em que estivemos, ou seja, o penúltimo diretório existente.
-
-O `.` significa o diretório atual, e o `..` significa o diretório-pai do diretório atual.
-
-O comando `cd ~` envia o usuário para o diretório `/home` do usuário atual.
+Podemos utilizar a `,` para separarmos as colunas, assim, se utilizarmos o comando `cat logs | cut -d " " -f1-3,6-`, estamos obtendo as colunas de `1` até `3` e, após isso, da coluna `6` até a última coluna que foi feita essa divisão.
 
 # AULA 04
 
-## CRIANDO DIRETÓRIOS
+## REGEX COM O GREP
 
-O comando `mkdir nome-do-diretorio` é utilizado para criarmos um diretório.
+O comando `grep -E` permite que utilizemos uma expressão regular, ou _RegEx_, para realizarmos uma busca em um arquivo por esse padrão.
 
-O comando `mkdir -p dir1/dir2/dir3/dir4` permite a criação de vários diretórios ao mesmo tempo.
+O comando `grep -E "^computer"` permite que procuremos todas as palavras que comecem com `computer`.
 
-O comando `touch nome-do-arquivo` é utilizado para criarmos arquivos vazios.
+O comando `grep -E "computer$"` exibirá todas as palavras que terminam com `computer`.
 
-O comando `touch .nome-do-arquivo` é utilizado para criarmos um arquivo oculto vazio.
+O comando `grep -E "^computer$"` permite que exibamos apenas as linhas que possuam a **exatamente** a palavra `computer`.
 
-## REMOVENDO DIRETÓRIOS E ARQUIVOS
+O comando `echo string` exibe uma string na saída padrão do terminal.
 
-O comando `rmdir nomeDoDiretorio` serve para remover diretórios que estão vazios.
+O comando `cat american-english | grep -iE "^computer$"` permite que procuremos, dentro do conteúdo do arquivo `american-english`, a palavra `computer`, ignorando o case.
 
-O comando `rm nomeDoArquivo` serve para removermos arquivos.
+O comando `grep -E` possui a mesma função do comando `egrep`.
 
-O comando `rm -r nomeDoDiretorio` serve para apagarmos um diretório e todos os arquivos que estão dentro desse diretório.
+O comando `cat american-english | grep -iE "smartphone|computer"` verificará, dentro do conteúdo do arquivo `american-english`, se existe alguma string que tenha as palavras `smartphone` ou `computer`, sempre ignorando o case, por causa do parâmetro `-i`. O `|` indica o `ou`.
 
-O comando `rm -rf nomeDoDiretorio` força a remoção de **TODOS** os arquivos que estão dentro de um determinado diretório.
+O comando `egrep "^.oot$"` procurará todas as palavras que terminem em `oot` e que o primerio caractere seja qualquer letra. O operador `.` possui o mesmo conceito do `?` no _globbing_
 
-Para criarmos um diretório com espaço, temos que **escapar** o espaço, por exemplo: `mkdir Área\ de\ Trabalho`, dessa forma, estaremos criando o diretório `Área de Trabalho`.
+O comando `egrep "^[aeiou]oot..$"` pegará qualquer arquivo que comece com os caracteres `a`, `e`, `i`, `o` ou `u`, que tenha os caracteres `oot` depois desse primeiro caractere e que tenha mais dois caracteres quaisquer após isso.
 
-## COPIANDO ARQUIVOS COM O CP
-
-O comando `cp -r * dir2` permite que realizemos a cópia de todos os arquivos do diretório atual para o diretório `dir2`. O `*` engloba todos os arquivos de um determinado diretório.
-
-## MOVENDO E RENOMEANDO COM O MV
-
-O comando `mv dir1 dir4` serve para movermos o diretório `dir1` para o diretório `dir4` se ele não existir, ou seja, estamos **renomeando** o diretório `dir1` para `dir4`.
-
-Se, nesse exemplo, o diretório `dir4` existisse, o diretório `dir1` seria enviado para dentro do diretório `dir4`.
-
-Caso queiramos mover apenas os arquivos do `dir1`, devemos inserir o comando `mv dir1/* dir4`.
-
-## HISTÓRICO
-
-O comando `history` exibirá o histórico dos comandos que foram executados no bash.
+O `grep` somado com o `regex` consegue localizar quase qualquer conteúdo dentro de um arquivo.
 
 # AULA 05
 
-## GLOBBING
+## EDITORES DE TEXTO NANO E VI
 
-O comando `ls *` exibirá todos os arquivos que não estão ocultos.
+### NANO
 
-O comando `ls arq*` exibirá todos os arquivos que começam com o `arq` e tenham qualquer coisa em sua sequência. Se tivermos um arquivo com o nome `arq`, ele também será exibido, pois o comando `ls arq*` retornará até os arquivos que tiverem o prefixo `arq` e que não tiverem nada na sequência.
+O comando `nano nome-do-arquivo` abrirá o editor de textos `Nano` em um determinado arquivo.
 
-Basicamente, o `*` significa tudo ou nada, assim, se tivermos um arquivo chamado `arq`, como no exemplo acima, ele também será listado.
+### VI
 
-O comando `ls arq1?` exibirá todos os arquivos que tiverem o prefixo `arq1` e que tiverem apenas um caractere após o `1`, ou seja, os arquivos `arq10`, `arq11` e etc, serão listados.
+Algumas máquinas não possuem o editor `nano` por padrão. O `vi` é um editor mais famoso e que está na maioria das máquinas.
 
-Se utilizarmos o comando `ls arq[1-5]`, serão exibidos os arquivos `arq1`, `arq2`, `arq3`, `arq4` e `arq5`, pois estamos passando o `range` de `1` até `5` para o comando `ls`.
+As novas distribuições do Linux já usam o `vim` ao invés do `vi`, que é uma versão melhorada do `vi`.
 
-Se quisermos, ao invés de um `range`, passar os arquivos que tenham apenas os números `1` e `5`, basta separarmos esses valores por vírgula, como em `ls arq[1, 5]`, assim, apenas os arquivos `arq1` e `arq5` serão listados.
+Dentro do `vi`, se utilizarmos a tecla `esc`, alternamos entre os modos do editor.
+
+Dentro do modo de comandos, o comando `:q` serve para sairmos do editor `Vim`.
+
+Se apertarmos a tecla `i`, mudamos para o modo de inserção e conseguimos realizar inserções dentro do texto.
+
+O comando `:qw` serve para sairmos do editor e salvarmos o arquivo.
+
+O comando `:q!` serve para sairmos de um arquivo sem salvar.
+
+Ao apertarmos o comando `r`, conseguimos fazer o _replace_ de um caractere por outro.
+
+O comando `:w nome-do-arquivo` serve para salvarmos o arquivo atual com outro nome.
+
+O comando `dd` serve para recortarmos uma linha.
+
+Se utilizarmos o comando `11dd`, a partir do cursor no `vi`, 11 linhas serão deletadas.
+
+O comando `:20` posiciona o cursor na linha 20 do arquivo atual.
+
+O comando `gg` leva até o início do arquivo.
+
+O comando `G` leva até o final do arquivo.
+
+### CÓPIA, COLA E REPLACE
+
+O comando `/ssh` procura pelo caractere `ssh`.
+
+O comando `p` serve para colarmos uma linha depois da linha atual. O comando `P` serve para colarmos uma linha antes do cursor.
+
+O comando `undo` desfaz o último comando.
+
+Para copiarmos uma linha, devemos utilizar o comando `yy`. Para copiarmos 4 linhas a partir do cursor atual, por exemplo, devemos usar o comando `4yy`.
+
+O comando `s/ssh/SSH` serve para substituirmos a primeira string, que é a `ssh`, para o `SSH`. Isso serve apenas para a linha atual. O comando `s/ssh/SSH/g` substitui todas as ocorrências nessa linha, ao invés de apenas a primeira ocorrência da linha.
+
+O comando `%s/domain/teste/g` serve para substituir, **no arquivo inteiro**, todas as palavras `domain` e trocá-las pelo `teste`.
